@@ -119,7 +119,6 @@ function displayPosts(blog) {
 // function to create pagination buttons
 function paginationButtons() {
     for (let page = 1; page <= totalPages; page++) {
-        console.log(totalPages);
         const pageButton = document.createElement("button");
         pageButton.classList.add("page-btn");
         pageButton.textContent = page;
@@ -158,3 +157,21 @@ function setActivePageBtn(pageNumber) {
     clickedPageBtn.classList.add("active");
   }
 
+//search functionality
+//get the search bar element
+const searchBarElement = document.querySelector(".search-bar");
+
+//add change event listener to the search bar element
+searchBarElement.addEventListener("change", () => {
+    // get the text value from the search bar input
+    const searchInput = document.querySelector('input[type="search"]');
+    const searchInputValue = searchInput.value;
+
+    if (searchInputValue !== "") {
+        // update the fetch request url based on the searchInputValue
+        let urlUpdate = `&q=${searchInputValue}`;
+
+    } else {
+        // return the first page of blog posts
+    }
+});
