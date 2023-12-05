@@ -18,15 +18,15 @@ const errorMessageClose = document.querySelector(".close");
 form.addEventListener("submit", createNewPost);
 
 // Query the server for the blogs data
-async function fetchBlogs() {
+async function fetchItemCount() {
     try {
         const response = await fetch(url);
         if(!response.ok)
             throw Error(`Error ${response.url} ${response.statusText}`);
-        blogs = await response.json();
         
         // calculate total number of blogs and the required number of pages
-        const blogCount = response.headers.get('x-total-count');
+        const itemCount = parseInt(response.headers.get('x-total-count'));
+        return itemCount;
         
     } catch(error) {
         console.log(error.message)
@@ -36,29 +36,30 @@ async function fetchBlogs() {
 // check form validity, PUT new post to the server
 async function createNewPost(e) {
 
+    e.preventDefault();
+    const isValid = form.reportValidity();
+
     const inputs = document.querySelectorAll("input");
     const textArea = document.querySelector("textarea");
 
     const title = inputs[0].value;
     const author = inputs[1].value;
     const content = textArea.value;
-    console.log(title, author, content)
+    
+    // fetch item count
+    const itemCount = await fetchItemCount();
 
-    const id = blogCount;
+    const id = itemCount + 1;
     const date = new Date();
     const profile = "images/default.jpeg";
 
     const newPost = {id, title, author, date, profile, content};
 
-
-    const isValid = form.reportValidity();
-
     if (isValid) {
-        e.preventDefault();
         
         // write newPost data to the server
         try {
-            const response = await fetch(`${url}?_id=${id}`, {
+            const response = await fetch(url, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(newPost)
@@ -68,7 +69,6 @@ async function createNewPost(e) {
                 throw Error(`Error ${response.url} ${response.statusText}`)
             }
             
-            //window.location.href = "/";
         } catch(error) {
             errorMessageDiv.innerHTML = "";
             errorMessageContainer.classList.remove("hidden");
@@ -87,19 +87,5 @@ async function createNewPost(e) {
     // return to the landing page
     //window.location.href = "/index.html";
 
-//   } else {
-//     e.preventDefault();
-
-//     errorMessageDiv.innerHTML = "";
-//     errorMessageContainer.classList.remove("hidden");
-
-//     requiredFields.forEach(field => {
-//         if (field.value.trim() === "") {
-//             const fieldName = field.getAttribute("name");
-//             const errorMessage = document.createElement("p");
-//             errorMessage.textContent = `${fieldName} is required, please correct the form.`;
-//             errorMessageDiv.appendChild(errorMessage);
-//         }
-//     });
   }
 }
