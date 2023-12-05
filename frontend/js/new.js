@@ -5,25 +5,14 @@ const postButton = document.querySelector("button[type=submit]");
 
 const form = document.querySelector("form");
 const requiredFields = form.querySelectorAll("[required]");
-const inputs = document.querySelectorAll("input");
-const textArea = document.querySelector("textarea");
-
-const title = inputs[0].value;
-const author = inputs[1].value;
-const content = textArea.value;
-
-const id = blogCount;
-const date = new Date();
-const profile = "images/default.jpeg";
-
-const newPost = {id, title, author, date, profile, content};
 
 // set fetch url
-const url = `http://localhost:3000/blogs`;
+const url = "http://localhost:3000/blogs";
 
 // get the error notification elements
 const errorMessageContainer = document.querySelector(".notification-container");
 const errorMessageDiv = document.querySelector(".notification");
+const errorMessageClose = document.querySelector(".close");
 
 // Add functionality to the post button
 form.addEventListener("submit", createNewPost);
@@ -46,28 +35,51 @@ async function fetchBlogs() {
 
 // check form validity, PUT new post to the server
 async function createNewPost(e) {
-  
-  const isValid = form.reportValidity();
 
-  if (isValid) {
-    e.preventDefault();
-    
-    // write newPost data to the server
-    try {
-        const response = await fetch(`${url}/`, {
-            method: "PUT",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(newPost)
-        });
+    const inputs = document.querySelectorAll("input");
+    const textArea = document.querySelector("textarea");
 
-        if (!response.ok) {
-            throw Error(`Error ${response.url} ${response.statusText}`)
-        }
+    const title = inputs[0].value;
+    const author = inputs[1].value;
+    const content = textArea.value;
+    console.log(title, author, content)
+
+    const id = blogCount;
+    const date = new Date();
+    const profile = "images/default.jpeg";
+
+    const newPost = {id, title, author, date, profile, content};
+
+
+    const isValid = form.reportValidity();
+
+    if (isValid) {
+        e.preventDefault();
         
-        //window.location.href = "/";
-    } catch(error) {
-        console.log(error.message)
-    }
+        // write newPost data to the server
+        try {
+            const response = await fetch(`${url}?_id=${id}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(newPost)
+            });
+
+            if (!response.ok) {
+                throw Error(`Error ${response.url} ${response.statusText}`)
+            }
+            
+            //window.location.href = "/";
+        } catch(error) {
+            errorMessageDiv.innerHTML = "";
+            errorMessageContainer.classList.remove("hidden");
+            const errorMessageP = document.createElement("p");
+            errorMessageDiv.appendChild(errorMessageP);
+            errorMessageP.innerHTML = error.message;
+
+            errorMessageClose.addEventListener("click", () => {
+                errorMessageContainer.classList.add("hidden");    
+            })
+        }
     
     // reset the form
     form.reset();
