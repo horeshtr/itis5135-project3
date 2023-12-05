@@ -15,7 +15,6 @@ const paginationContainer = document.querySelector(".pagination-container");
 let blogs = [];
 
 // create empty variables for blog and page count calcs, set the initial page number
-let blogCount;
 let totalPages;
 let currentPage = 1;
 
@@ -30,11 +29,15 @@ async function fetchBlogs() {
             throw Error(`Error ${response.url} ${response.statusText}`);
         blogs = await response.json();
         
-        blogCount = response.headers.get('x-total-count');
+        // calculate total number of blogs and the required number of pages
+        const blogCount = response.headers.get('x-total-count');
         totalPages = Math.ceil(parseInt(blogCount) / PAGE_LIMIT);
-        console.log(blogCount, totalPages);
         
+        // load the blogs
         loadBlogs();
+
+        // clear the pagination container and create the pagination buttons
+        paginationContainer.innerHTML = "";
         paginationButtons();
 
     } catch(error) {
@@ -96,6 +99,7 @@ function displayPosts(blog) {
 
     articleTitle.innerText = blog.title;
 
+    // truncate the displayed content based on the maximum allowable character length
     let postContent = blog.content;
     let displayContent = "";
     let remainingContent = "";
@@ -115,6 +119,7 @@ function displayPosts(blog) {
 // function to create pagination buttons
 function paginationButtons() {
     for (let page = 1; page <= totalPages; page++) {
+        console.log(totalPages);
         const pageButton = document.createElement("button");
         pageButton.classList.add("page-btn");
         pageButton.textContent = page;
