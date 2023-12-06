@@ -29,7 +29,15 @@ async function fetchItemCount() {
         return itemCount;
         
     } catch(error) {
-        console.log(error.message)
+        errorMessageDiv.innerHTML = "";
+        errorMessageContainer.classList.remove("hidden");
+        const errorMessageP = document.createElement("p");
+        errorMessageDiv.appendChild(errorMessageP);
+        errorMessageP.innerHTML = error.message;
+
+        errorMessageClose.addEventListener("click", () => {
+            errorMessageContainer.classList.add("hidden");    
+        })
     }
 }
 
