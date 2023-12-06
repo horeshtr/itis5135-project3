@@ -158,20 +158,37 @@ function setActivePageBtn(pageNumber) {
   }
 
 //search functionality
-//get the search bar element
+//get the search bar and search bar input elements 
 const searchBarElement = document.querySelector(".search-bar");
+const searchInput = document.querySelector('input[type="search"]');
 
 //add change event listener to the search bar element
-searchBarElement.addEventListener("change", () => {
+searchBarElement.addEventListener("input", async () => {
     // get the text value from the search bar input
-    const searchInput = document.querySelector('input[type="search"]');
     const searchInputValue = searchInput.value;
 
     if (searchInputValue !== "") {
         // update the fetch request url based on the searchInputValue
         let urlUpdate = `&q=${searchInputValue}`;
 
-    } else {
-        // return the first page of blog posts
-    }
+        try {
+            const response = await fetch(`${url}?_page=${currentPage}&_limit=${PAGE_LIMIT}&_sort=date&_order=asc${urlUpdate}`);
+            if(!response.ok)
+                throw Error(`Error ${response.url} ${response.statusText}`);
+            blogs = await response.json();
+            
+            // calculate total number of blogs and the required number of pages
+            const blogCount = response.headers.get('x-total-count');
+            totalPages = Math.ceil(parseInt(blogCount) / PAGE_LIMIT);
+            
+            // load the blogs
+            loadBlogs();
+
+            // clear the pagination container and create the pagination buttons
+            paginationContainer.innerHTML = "";
+            paginationButtons();
+        } catch(error) {
+            console.log(error.message)
+        }
+    } 
 });
