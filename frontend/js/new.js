@@ -85,7 +85,6 @@ async function createNewPost(e) {
     form.reset();
 
     // return to the landing page
-    //window.location.href = "/index.html";
-
+    window.location.href = "/index.html";
   }
 }
