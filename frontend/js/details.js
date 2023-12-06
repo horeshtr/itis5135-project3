@@ -2,11 +2,9 @@
 
 // get id from the current browser url
 const id = new URLSearchParams(window.location.search).get("id");
-console.log(id);
 
 // set the fetch url
 const url = `http://localhost:3000/blogs/${id}`;
-console.log(url);
 
 // get the article wrapper element
 const articleWrapper = document.querySelector("article");
@@ -32,6 +30,7 @@ async function fetchBlogs() {
     }
 }
 
+// generate all DOM elements, set attributes and classes, and render blog data on page
 function generateBlog(blog) {
     articleWrapper.innerHTML = "";
 
@@ -72,6 +71,8 @@ function generateBlog(blog) {
     deleteButton.classList.add("btn");
     buttonContainer.appendChild(deleteButton);
 
+    deleteButton.addEventListener("click", deletePost);
+
     const deleteIcon = document.createElement("i");
     deleteIcon.classList.add("fa-solid", "fa-trash-can");
     deleteButton.appendChild(deleteIcon);
@@ -84,4 +85,11 @@ function generateBlog(blog) {
     return articleWrapper;
 }
 
-
+async function deletePost() {
+    const response = await fetch(url, {method: "DELETE"});
+    if (!response.ok) {
+        throw Error(`Error ${response.url} ${response.statusText}`);
+    } else {
+        window.location.href = "/";
+    }
+}
