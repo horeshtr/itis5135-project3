@@ -9,6 +9,11 @@ const url = `http://localhost:3000/blogs/${id}`;
 // get the article wrapper element
 const articleWrapper = document.querySelector("article");
 
+// get the error notification elements
+const errorMessageContainer = document.querySelector(".notification-container");
+const errorMessageDiv = document.querySelector(".notification");
+const errorMessageClose = document.querySelector(".close");
+
 // create empty array for blogs data
 let blogs = [];
 
@@ -26,7 +31,15 @@ async function fetchBlogs() {
         generateBlog(blogs);
 
     } catch(error) {
-        console.log(error.message)
+        errorMessageDiv.innerHTML = "";
+        errorMessageContainer.classList.remove("hidden");
+        const errorMessageP = document.createElement("p");
+        errorMessageDiv.appendChild(errorMessageP);
+        errorMessageP.innerHTML = error.message;
+
+        errorMessageClose.addEventListener("click", () => {
+            errorMessageContainer.classList.add("hidden");    
+        })
     }
 }
 
