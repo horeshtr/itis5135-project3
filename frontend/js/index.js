@@ -11,6 +11,11 @@ const articleWrapper = document.querySelector(".articles-wrapper");
 // get the pagination container element
 const paginationContainer = document.querySelector(".pagination-container");
 
+// get the error notification elements
+const errorMessageContainer = document.querySelector(".notification-container");
+const errorMessageDiv = document.querySelector(".notification");
+const errorMessageClose = document.querySelector(".close");
+
 // create empty array for blogs data
 let blogs = [];
 
@@ -41,7 +46,15 @@ async function fetchBlogs() {
         paginationButtons();
 
     } catch(error) {
-        console.log(error.message)
+        errorMessageDiv.innerHTML = "";
+        errorMessageContainer.classList.remove("hidden");
+        const errorMessageP = document.createElement("p");
+        errorMessageDiv.appendChild(errorMessageP);
+        errorMessageP.innerHTML = error.message;
+
+        errorMessageClose.addEventListener("click", () => {
+            errorMessageContainer.classList.add("hidden");    
+        })
     }
 }
 
@@ -188,7 +201,15 @@ searchBarElement.addEventListener("input", async () => {
             paginationContainer.innerHTML = "";
             paginationButtons();
         } catch(error) {
-            console.log(error.message)
+            errorMessageDiv.innerHTML = "";
+            errorMessageContainer.classList.remove("hidden");
+            const errorMessageP = document.createElement("p");
+            errorMessageDiv.appendChild(errorMessageP);
+            errorMessageP.innerHTML = error.message;
+
+            errorMessageClose.addEventListener("click", () => {
+                errorMessageContainer.classList.add("hidden");    
+            })
         }
     } 
 });
